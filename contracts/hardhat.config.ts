@@ -15,6 +15,9 @@ export default defineConfig({
       type: "edr-simulated",
       chainType: "l1",
       chainId: 31337,
+      accounts: {
+        count: 21,
+      },
     },
     localhost: {
       type: "http",

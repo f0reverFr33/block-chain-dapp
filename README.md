@@ -1,71 +1,140 @@
-# ZJU-blockchain-course-2026
+# MiniDEX：基于 AMM 的去中心化交易所
 
-⬆ 可以️修改成你自己的项目名。
-
-> 第二次作业要求（以下内容提交时可以删除）：
-> 
-> 基于 AMM 的去中心化交易所 DEX 和原子套利，参与方包括：交易用户（User）、流动性提供者（Liquidity Provider）、套利者（Arbitrageur）
->
-> **背景**：去中心化交易所（DEX）采用自动做市商（AMM）机制，通过智能合约维护代币资产池，使用户可以直接与区块链上的资产池进行交易，无需依赖中心化交易机构进行撮合。在一个资产池部署后，流动性提供者可以往其中加入代币或者减少代币来添加/撤销流动性，用户在资产池的交易会让代币价格发生变化。套利者可以利用价格差盈利。
->
-> 建立一个/多个基于 AMM 的去中心化交易所 DApp（参考 [Uniswap V2/V3/V4](https://app.uniswap.org/)，实现时参考 Uniswap V2 版本即可），在网站中：
->
-> - ERC20 Token 创建。实现至少两个 ERC20 Token（如代币 A 和代币 B 等）。要求实现模拟多个用户分别领取测试用的 Token，也可以领取测试所需的以太币。
-> - 创建 AMM 交易池。在网站前端，用户可以在交易所中基于创建好的、自己已有的各种 ERC20 代币来创建交易池（如 A/B 交易池、A/ETH 交易池等），交易池需要维护代币的储备量、根据恒定乘积公式计算交易价格（考虑手续费），提供给用户交易、添加/撤销流动性的接口，并按一定比例收取交易手续费，用于提供给流动性提供者奖励。
-> - 提供/移除流动性。在网站前端，用户可以向交易池中注入代币来添加流动性，添加流动性后，用户获得一个代表该流动性证明的 ERC721 NFT，包含流动性池信息、用户提供的流动性数量、时间信息等；用户可以在前端查看每个池子的流动性来源和自己的 NFT 信息；用户可以通过销毁 ERC721 NFT 来取回对应的代币和相应的手续费分红。
-> - 模拟交易、提供/移除流动性。为了测试交易所运行情况，需要创建至少 20 个模拟用户/地址。每个用户随机执行（也可以不同的用户分别执行）代币交易、添加/撤销流动性等操作，稳定运行一段时间。上述流程中可以自定义手续费和分红奖励机制，也可以参考已有项目的设计。
-> - Bonus（5分，若想要完成，可以直接将功能补充和整合进上述要求中）：
->   1. （2分）部署两个或多个交易所，每个交易所可以对相同的代币对有不同的池子。模拟用户在不同交易池中随机交易，让不同的交易池形成价格差。
->   2. （3分）实现套利合约：当检测到不同交易所的池子之间、或同一交易所内部，存在价格差时，模拟套利者：自动在低价交易所购买代币，在高价交易所出售代币，获得利润。要求：套利过程在一次交易中完成；如果套利失败，整个交易需要 revert；展示套利前后的资产的价格、数量变化和盈利情况。
-> - 可以对上述需求进行合理更改和说明。请大家专注于功能实现，网站UI美观程度不纳入评分标准，能让用户能够舒适操作即可。
-
-**以下内容为作业仓库的README.md中需要描述的内容。请根据自己的需要进行修改并提交。**
-
-作业提交方式为：**提交视频文件**和**仓库的链接**到指定邮箱。⚠️ 不要发送源代码到邮箱，只需要提供**公开可见**的仓库链接（记得不要匿名仓库）。
+作者：陈元煦（3230104846）
 
 ## 如何运行
 
-补充如何完整运行你的应用，例如：
+### 1. 准备环境
 
-1. 在本地启动ganache应用。
+建议使用 Node.js 24，并在浏览器中安装 MetaMask。第一次运行时安装依赖：
 
-2. 在 `./contracts` 中安装需要的依赖，运行如下的命令：
-    ```bash
-    npm install
-    ```
-3. 在 `./contracts` 中编译合约，运行如下的命令：
-    ```bash
-    npx hardhat compile
-    ```
-4. ...
-5. ...
-6. 在 `./frontend` 中安装需要的依赖，运行如下的命令：
-    ```bash
-    npm install
-    ```
-7. 在 `./frontend` 中启动前端程序，运行如下的命令：
-    ```bash
-    npm run start
-    ```
+```bash
+cd contracts
+npm ci
+
+cd ../frontend
+npm ci
+```
+
+### 2. 启动本地区块链
+
+在项目根目录打开第一个终端：
+
+```bash
+cd contracts
+npm run node
+```
+
+保持终端运行。节点地址为 `http://127.0.0.1:8545`，Chain ID 为 `31337`，提供 21 个带测试 ETH 的本地账户。
+
+### 3. 部署合约
+
+打开第二个终端：
+
+```bash
+cd contracts
+npm run deploy
+```
+
+命令会依次部署 TKA、TKB 和 MiniDEX，并输出三个合约地址。
+
+### 4. 启动前端
+
+打开第三个终端：
+
+```bash
+cd frontend
+npm run dev
+```
+
+访问 [http://localhost:3000](http://localhost:3000)，点击“连接 MetaMask”，确认连接并切换或添加 Hardhat 本地网络。
+
+前端默认使用**全新节点上第一次执行部署脚本**所得的地址。如果部署顺序不同，请根据部署输出创建 `frontend/.env.local`：
+
+```dotenv
+VITE_TOKEN_A_ADDRESS=TKA地址
+VITE_TOKEN_B_ADDRESS=TKB地址
+VITE_MINIDEX_ADDRESS=MiniDEX地址
+```
+
+修改后重启前端。每次重启本地节点都会清空链上状态，需要重新部署并刷新页面。
+
+### 5. 页面操作
+
+1. 点击“创建交易池”并确认交易。
+2. 分别领取 TKA、TKB；每个地址、每种代币限领一次。
+3. 输入两种代币数量，点击“授权并注资”，依次确认两次授权和一次注资。
+4. 注资成功后，页面显示 LP NFT、流动性来源和池子储备。
+5. 选择交换方向并输入数量，确认授权和交换。
+6. 在“我的 LP NFT”中点击“赎回两种代币”，销毁 NFT 并取回资产。
+
+请只使用 Hardhat 提供的测试账户，不要将真实账户私钥用于本地开发。
+
+### 6. 测试与演示
+
+单元测试和构建：
+
+```bash
+cd contracts
+npm test
+npm run typecheck
+
+cd ../frontend
+npm test
+npm run build
+```
+
+保持本地节点运行，在 `contracts/` 中还可以执行：
+
+```bash
+npm run smoke       # 部署、建池、注资、交换、赎回的完整流程
+npm run simulate    # 20 用户随机操作及账目一致性检查
+npm run arbitrage   # Bonus：两个交易所之间的原子套利与失败回滚演示
+```
 
 ## 功能实现分析
 
-简单描述：项目完成了要求的哪些功能？每个功能具体是如何实现的？
-
-建议分点列出。
-
 ## 项目运行截图
 
-放一些项目运行截图。
+### 1. 前端首页
 
-项目运行成功的关键页面和流程截图。主要包括操作流程以及和区块链交互的截图。
+![MiniDEX 前端首页](docs/screenshots/frontend-home.png)
+
+### 2. 连接 MetaMask 与测试代币
+
+![连接 MetaMask 与测试代币余额](docs/screenshots/01-wallet-connected.png)
+
+### 3. 创建交易池
+
+![创建 TKA/TKB 交易池](docs/screenshots/02-create-pool.png)
+
+### 4. 添加流动性并获得 LP NFT
+
+![添加流动性并获得 LP NFT](docs/screenshots/03-add-liquidity.png)
+
+### 5. TKA 兑换 TKB
+
+![TKA 兑换 TKB](docs/screenshots/04-swap-a-to-b.png)
+
+### 6. TKB 兑换 TKA
+
+![TKB 兑换 TKA](docs/screenshots/05-swap-b-to-a.png)
+
+### 7. 赎回流动性并销毁 LP NFT
+
+![赎回流动性并销毁 LP NFT](docs/screenshots/06-remove-liquidity.png)
+
+### 8. 20 个模拟用户
+
+![20 个模拟用户及账目一致性检查](docs/screenshots/07-simulate-20-users.png)
+
+### 9. Bonus：双交易所原子套利
+
+![双交易所原子套利与失败回滚](docs/screenshots/08-atomic-arbitrage.png)
 
 ## 参考内容
 
-- 课程的参考Demo见：[DEMOs](https://github.com/LBruyne/blockchain-course-demos)。
-
-- 快速实现 ERC721 和 ERC20：[模版](https://wizard.openzeppelin.com/#erc20)。记得安装相关依赖，例如 ``"@openzeppelin/contracts": "^5.0.0"``。
-
-- 如何实现ETH和ERC20的兑换？ [参考讲解](https://www.wtf.academy/en/docs/solidity-103/DEX/)
-
-如果有其它参考的内容，也请在这里陈列。
+- [Uniswap V2 文档](https://docs.uniswap.org/contracts/v2/overview)
+- [OpenZeppelin Contracts](https://docs.openzeppelin.com/contracts/)
+- [Hardhat 文档](https://hardhat.org/docs)
+- [ethers 文档](https://docs.ethers.org/v6/)

@@ -1,6 +1,6 @@
 # MiniDEX 合约工程
 
-使用 Hardhat 3、ethers 6 和 TypeScript。`contracts/MiniDEX.sol` 目前仅是 Demo，DEX 功能尚待实现。
+使用 Hardhat 3、ethers 6 和 TypeScript。`contracts/MiniDEX.sol` 实现恒定乘积交易池、0.3% 手续费和 LP NFT；`TestToken.sol` 提供两种 ERC20 测试币，`AtomicArbitrage.sol` 实现双交易所原子套利。
 
 ## 安装与检查
 
