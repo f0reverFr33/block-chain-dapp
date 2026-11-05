@@ -163,6 +163,10 @@ amountOut = 有效输入 * reserveOut / (reserveIn + 有效输入)
 
 ![双交易所原子套利与失败回滚](docs/screenshots/08-atomic-arbitrage.png)
 
+## 演示视频
+
+[点击查看完整操作演示](docs/demo.mp4)
+
 ## 参考内容
 
 - [Uniswap V2 文档](https://docs.uniswap.org/contracts/v2/overview)
